@@ -1,0 +1,23 @@
+1. Place gene_info.gz file into the EX_1 folder
+2. Run python gene.py --Filename (eg. python gene.py gene_info.gz)
+
+Question / Disscussion: 
+
+1. Is the filename hardcoded?
+    No, the filename is a variable that has to be added to the starting command. 
+2. How to increase the speed of testing?
+    Testing what? Better Hardware, better algorythms, Batch Processing, Multithreading
+3. What happens if no input file is provided?
+    The Scripts displays a message, that the input file need to be provided 
+4. What happens if the input file contains an error?
+    Depends on what "Error" it is. In this case errors are generally ignored so the line is skipped. 
+5. How to document the software?
+    Via a README and Comments, generally with additional Technical docs for APIs etc. 
+6. How to track changes?
+    In this case via GIT. 
+7. How could the software be devlivered to clients?
+    Compiled into an EXE, as a Docker Image, cloned via Github, CTRL-C CTRL-V for simple scripts.
+8. How could the software be updated (on client environment)?
+    Push update via Github, update Docker image, send patch manually. 
+9. What is a good way to prevent bugs after an update?
+    Test the update
