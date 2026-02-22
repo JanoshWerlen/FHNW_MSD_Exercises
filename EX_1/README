@@ -1,0 +1,2 @@
+1. Place gene_info.gz file into the EX_1 folder
+2. Run python gene.py --Filename (eg. python gene.py gene_info.gz)
