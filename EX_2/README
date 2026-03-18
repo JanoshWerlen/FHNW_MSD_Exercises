@@ -1,0 +1,2 @@
+Run pip install biopython
+Run python gccompute.py cds.fna
