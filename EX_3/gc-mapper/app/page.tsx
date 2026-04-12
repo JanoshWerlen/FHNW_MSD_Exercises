@@ -74,6 +74,17 @@ export default function Home() {
     }
   }
 
+  function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target?.result as string;
+      setInput(text);
+    };
+    reader.readAsText(file);
+  }
+
   return (
     <div className="min-h-screen bg-zinc-50 px-6 py-10 font-sans dark:bg-black">
       <main className="mx-auto flex w-full max-w-3xl flex-col gap-6 rounded-2xl bg-white p-8 shadow-sm ring-1 ring-zinc-200 dark:bg-zinc-950 dark:ring-zinc-800">
@@ -98,6 +109,21 @@ export default function Home() {
             onChange={(event) => setInput(event.target.value)}
             placeholder={">seq1\nACGTACGT"}
           />
+
+          <div>
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300" htmlFor="fasta-file">
+              Or upload FASTA file
+            </label>
+            <input
+              id="fasta-file"
+              name="fasta-file"
+              type="file"
+              accept=".fasta,.fa,.fna,.txt"
+              className="mt-1 block w-full cursor-pointer rounded-xl border border-zinc-300 bg-white text-sm text-zinc-700 shadow-sm transition file:mr-4 file:cursor-pointer file:rounded-lg file:border-0 file:bg-zinc-900 file:px-4 file:py-2.5 file:text-sm file:font-medium file:text-white file:transition file:hover:bg-zinc-700 hover:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200 dark:file:bg-zinc-100 dark:file:text-zinc-950 dark:file:hover:bg-white"
+              onChange={handleFileChange}
+            />
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Uploading a file will overwrite the text area above.</p>
+          </div>
 
           <button
             type="submit"
