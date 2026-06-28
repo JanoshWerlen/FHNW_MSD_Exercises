@@ -1,0 +1,9 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.SensorDataCollector" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">#90CAF9</item>
+        <item name="colorOnPrimary">#003C8F</item>
+        <item name="colorPrimaryContainer">#1565C0</item>
+        <item name="colorOnPrimaryContainer">#BBDEFB</item>
+    </style>
+</resources>

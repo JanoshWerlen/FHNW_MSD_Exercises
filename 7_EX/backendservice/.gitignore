@@ -1,0 +1,7 @@
+env/
+.venv/
+src/__pycache__/
+.vscode/*
+src/.coverage
+src/backendservice.log
+*.log

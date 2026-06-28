@@ -1,0 +1,135 @@
+from concurrent.futures import process
+import json
+from flask import request, Flask, jsonify, make_response
+import os
+import random
+
+import datastructure
+import idgenerator
+import tracemalloc
+import psutil
+import os
+import logging
+
+app = Flask(__name__)
+
+
+logging.basicConfig(
+    filename="sequence.log",
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
+def load_environment():
+    try:
+        env_var = os.environ['WORKING_ENV']
+    except:
+        env_var = 'dev_env.json'
+
+    with open(env_var) as f:
+        env_values = json.loads(f.read())
+
+    return env_values
+
+
+@app.route('/', methods=['GET'])
+def index():
+    """Simple method to get some information about the software"""
+    return json.dumps({'name': 'David',
+                       'mail': 'fhnw@roche.ch',
+                       'System': 'Digital Biomarker Course Project',
+                       'Server Component': 'v1_0_0',
+                       'Date': '7-Apr-2026'})
+
+
+@app.route('/experiment', methods=['POST', 'GET'])
+def experiment_action():
+    ds = datastructure.DataStorage()
+    if request.method == 'POST':
+        body = request.get_json()
+        assert body is not None, "Request body is missing"
+        assert 'name' in body, "Missing field: name"
+        name = body['name']
+        experiment_obj = datastructure.Experiment(name)
+        ds.add_experiment(experiment_obj)
+        return jsonify(experiment_obj.__dict__)
+    if request.method == 'GET':
+        id = request.args.get('id')
+        result = ds.get_experiment(id)
+        if result == None:
+            return make_response(jsonify('experiment not found'), 404)
+        else:
+            return make_response(jsonify(result.__dict__), 200)
+
+
+@app.route('/patient', methods=['POST', 'GET'])
+
+def patient_action():
+    ds = datastructure.DataStorage()
+    if request.method == 'POST':
+        body = request.get_json()
+        assert body is not None, "Request body is missing"
+        name = body['name']
+        patient_obj = datastructure.Patient(name)
+        ds.add_patient(patient_obj)
+        return jsonify(patient_obj.__dict__)
+    if request.method == 'GET':
+        id = request.args.get('id')
+        result = ds.get_patient(id)
+        if result == None:
+            return make_response(jsonify('patient not found'), 404)
+        else:
+            return make_response(jsonify(result.__dict__), 200)
+
+
+@app.route('/patients', methods=['GET'])
+def patients_action():
+    ds = datastructure.DataStorage()
+    return json.dumps(ds.patients, cls=datastructure.PatientEncoder)
+
+
+@app.route('/experiments', methods=['GET'])
+def experiments_action():
+    ds = datastructure.DataStorage()
+    return json.dumps(ds.experiments, cls=datastructure.ExperimentEncoder)
+
+
+@app.route('/store', methods=['POST'])
+def store_data():
+    ds = datastructure.DataStorage()
+    print(f"DEBUG: Data before store: {len(ds.data)} items")  # Add this
+    print(f"DEBUG: Patients: {len(ds.patients)}, Experiments: {len(ds.experiments)}")
+    ds.store_data()
+    return make_response(jsonify("True"), 200)
+
+@app.route('/upload', methods=['POST'])
+def upload_data():
+    ds = datastructure.DataStorage()
+    if request.method == 'POST':
+        body = request.get_json()
+        assert body is not None, "Request body is missing"
+        patient_id = body['patientId']
+        experiment_id = body['experimentId']
+        data = body
+        data_obj = datastructure.DataPoint(patient_id, experiment_id, data)
+        ds.add_data(data_obj)
+        ds.flush_if_needed()
+        return make_response('', 200)
+
+
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG,
+        format='%(asctime)s %(message)s',
+        handlers=[logging.FileHandler("backendservice.log"),
+        logging.StreamHandler()])
+
+    logging.debug('Starting service...')
+
+    # load environment
+    env_variables = load_environment()
+
+    # check if there are data files for patients and experiments available
+    ds = datastructure.DataStorage()
+    ds.load_data()
+
+    app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=False)
